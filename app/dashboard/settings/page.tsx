@@ -122,13 +122,13 @@ export default function SettingsPage() {
             >
               Manage Account Security
             </button>
-            <button
+            {/* <button
               onClick={() => signOut()}
               className="bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive/20 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2"
             >
               <LogOut className="h-4 w-4" />
               Logout
-            </button>
+            </button>   */}
           </div>
         </section>
       </div>
