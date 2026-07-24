@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { AttendanceStatus } from "@prisma/client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://diettrack.vercel.app";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://messbook.vercel.app";
 
 export async function sendDailyReminders() {
   // 1. Fetch all registered users
@@ -125,8 +125,10 @@ export async function sendDailyReminders() {
       </html>
     `;
 
+    const fromEmail = process.env.RESEND_FROM_EMAIL || "DietTrack Reminders <onboarding@resend.dev>";
+
     return {
-      from: "DietTrack Reminders <onboarding@resend.dev>",
+      from: fromEmail,
       to: recipient,
       subject: "DietTrack: Pending Mess Attendance Alert 🥗",
       html: htmlContent,
