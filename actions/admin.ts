@@ -2,7 +2,8 @@
 
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
-import { signAdminToken } from "@/lib/admin-auth";
+import { signAdminToken, verifyAdminToken } from "@/lib/admin-auth";
+import { sendDailyReminders } from "@/lib/email";
 import { FeedbackStatus, AttendanceStatus } from "@prisma/client";
 
 // Helper to normalize dates to UTC midnight
@@ -80,8 +81,10 @@ export async function getAdminStats() {
   }
 }
 
-export async function getUsersList(searchQuery: string = "") {
+export async function getUsersList(searchQuery: string = "", statusFilter: string = "All") {
   try {
+    const today = normalizeDate(new Date());
+
     const users = await prisma.user.findMany({
       where: searchQuery
         ? {
@@ -99,11 +102,16 @@ export async function getUsersList(searchQuery: string = "") {
       },
     });
 
-    return users.map((user) => {
+    const mappedUsers = users.map((user) => {
       const taken = user.attendance.filter((a) => a.status === AttendanceStatus.Taken).length;
       const skipped = user.attendance.filter((a) => a.status === AttendanceStatus.Skipped).length;
       const total = taken + skipped;
       const attendanceRate = total > 0 ? Math.round((taken / total) * 100) : 0;
+
+      const todayRecord = user.attendance.find(
+        (a) => normalizeDate(a.date).getTime() === today.getTime()
+      );
+      const todayStatus = todayRecord ? todayRecord.status : "NotMarked";
 
       return {
         id: user.id,
@@ -111,8 +119,15 @@ export async function getUsersList(searchQuery: string = "") {
         email: user.email,
         createdAt: user.createdAt,
         attendanceRate,
+        todayStatus,
       };
     });
+
+    if (statusFilter === "All") {
+      return mappedUsers;
+    } else {
+      return mappedUsers.filter((u) => u.todayStatus === statusFilter);
+    }
   } catch (error) {
     console.error("Error getting users list:", error);
     throw new Error("Failed to fetch users list");
@@ -193,3 +208,54 @@ export async function updateFeedbackStatus(feedbackId: string, status: FeedbackS
     throw new Error("Failed to update feedback status");
   }
 }
+
+export async function triggerManualAlerts() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("admin_session")?.value;
+  if (!session) throw new Error("Unauthorized");
+
+  const isValid = await verifyAdminToken(session);
+  if (!isValid) throw new Error("Unauthorized");
+
+  try {
+    const result = await sendDailyReminders();
+    return result;
+  } catch (error) {
+    console.error("Manual trigger alerts error:", error);
+    throw new Error("Failed to send manual alerts");
+  }
+}
+
+export async function getWeeklyTrendData() {
+  try {
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const result: { name: string; Users: number }[] = [];
+
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(today.getDate() - i);
+      const dateMidnight = normalizeDate(d);
+
+      const activeCount = await prisma.attendance.count({
+        where: {
+          date: dateMidnight,
+          status: {
+            in: [AttendanceStatus.Taken, AttendanceStatus.Skipped],
+          },
+        },
+      });
+
+      result.push({
+        name: daysOfWeek[dateMidnight.getUTCDay()],
+        Users: activeCount,
+      });
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error getting weekly trend data:", error);
+    throw new Error("Failed to fetch weekly trend data");
+  }
+}
+

@@ -1,11 +1,13 @@
-import { getAdminStats } from "@/actions/admin";
+import { getAdminStats, getWeeklyTrendData } from "@/actions/admin";
 import { Users, Bolt, AlertCircle, CheckCircle2 } from "lucide-react";
 import AdminDashboardChart from "./AdminDashboardChart";
+import SystemActions from "./SystemActions";
 
 export const revalidate = 0; // Disable static caching so stats are always up to date
 
 export default async function AdminDashboardPage() {
   const stats = await getAdminStats();
+  const trendData = await getWeeklyTrendData();
 
   const cards = [
     {
@@ -74,13 +76,21 @@ export default async function AdminDashboardPage() {
         })}
       </section>
 
-      {/* Weekly Trend Chart */}
-      <section className="premium-border card-bg rounded-xl p-6 shadow-xl">
-        <div className="mb-6">
-          <h3 className="text-base font-bold text-white font-sans">Attendance Trends</h3>
-          <p className="text-xs text-muted-foreground">Daily engagement levels for the current week</p>
+      {/* Lower Dashboard Grid */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Weekly Trend Chart */}
+        <div className="md:col-span-2 premium-border card-bg rounded-xl p-6 shadow-xl">
+          <div className="mb-6">
+            <h3 className="text-base font-bold text-white font-sans">Attendance Trends</h3>
+            <p className="text-xs text-muted-foreground">Daily engagement levels for the current week</p>
+          </div>
+          <AdminDashboardChart data={trendData} />
         </div>
-        <AdminDashboardChart />
+
+        {/* System Actions */}
+        <div className="md:col-span-1">
+          <SystemActions />
+        </div>
       </section>
     </div>
   );

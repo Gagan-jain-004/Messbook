@@ -1,18 +1,19 @@
 import { getUsersList } from "@/actions/admin";
 import Link from "next/link";
-import { format } from "date-fns";
 import SearchBar from "./SearchBar";
+import FilterTabs from "./FilterTabs";
 
 export const revalidate = 0; // Disable caching to fetch fresh data on query update
 
 interface PageProps {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; status?: string }>;
 }
 
 export default async function AdminUsersPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const query = params.q || "";
-  const users = await getUsersList(query);
+  const status = params.status || "All";
+  const users = await getUsersList(query, status);
 
   return (
     <div className="flex flex-col gap-10">
@@ -28,9 +29,10 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
 
       {/* Search and Table Container */}
       <section className="premium-border bg-card rounded-xl overflow-hidden shadow-xl flex flex-col">
-        {/* Search Bar container */}
-        <div className="p-6 border-b border-border bg-surface-low/30">
+        {/* Search & Filter bar container */}
+        <div className="p-6 border-b border-border bg-surface-low/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <SearchBar initialValue={query} />
+          <FilterTabs activeStatus={status} />
         </div>
 
         {/* User Table */}
@@ -45,7 +47,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                   Email
                 </th>
                 <th className="px-6 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Joined Date
+                  Today&apos;s Status
                 </th>
                 <th className="px-6 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Attendance %
@@ -59,7 +61,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
               {users.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-sm text-muted-foreground">
-                    No users found matching &quot;{query}&quot;
+                    No users found matching query filters
                   </td>
                 </tr>
               ) : (
@@ -70,8 +72,20 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                   >
                     <td className="px-6 py-4 text-sm font-semibold text-white">{user.name}</td>
                     <td className="px-6 py-4 text-sm text-muted-foreground">{user.email}</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
-                      {format(new Date(user.createdAt), "MMM d, yyyy")}
+                    <td className="px-6 py-4">
+                      {user.todayStatus === "Taken" ? (
+                        <span className="text-[10px] font-bold text-secondary bg-secondary/15 border border-secondary/20 px-2.5 py-1 rounded-md">
+                          Taken
+                        </span>
+                      ) : user.todayStatus === "Skipped" ? (
+                        <span className="text-[10px] font-bold text-destructive bg-destructive/15 border border-destructive/20 px-2.5 py-1 rounded-md">
+                          Skipped
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-muted-foreground bg-surface-low border border-border px-2.5 py-1 rounded-md">
+                          Not Marked
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">

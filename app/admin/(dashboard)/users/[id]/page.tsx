@@ -148,7 +148,7 @@ export default async function AdminUserProfilePage({ params }: PageProps) {
                           Taken
                         </span>
                       ) : (
-                        <span className="text-xs font-semibold text-destructive bg-destructive/10 px-2.5 py-1 rounded-full border border-destructive/20">
+                        <span className="text-xs font-semibold text-destructive bg-destructive/10 px-2.5 py-1 rounded-full border border-secondary/20">
                           Skipped
                         </span>
                       )}
