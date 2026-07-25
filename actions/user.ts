@@ -50,3 +50,29 @@ export async function updateProfile(name: string) {
     throw new Error("Failed to update profile");
   }
 }
+
+import { createClerkClient } from "@clerk/nextjs/server";
+
+export async function deleteUserAccount() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const clerkClient = createClerkClient({
+    secretKey: process.env.CLERK_SECRET_KEY,
+  });
+
+  try {
+    // 1. Delete student records from PostgreSQL (cascading removes attendance & feedback logs)
+    await prisma.user.delete({
+      where: { clerkId: userId },
+    });
+
+    // 2. Delete student account from Clerk Auth
+    await clerkClient.users.deleteUser(userId);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Account deletion failed:", error);
+    throw new Error("Failed to delete account");
+  }
+}
