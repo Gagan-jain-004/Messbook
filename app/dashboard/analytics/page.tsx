@@ -98,23 +98,64 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Date Picker inputs */}
-        <div className="flex flex-wrap items-center gap-3 bg-card p-3 rounded-xl border border-border">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <input
-              type="date"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              className="bg-transparent border-none text-xs text-white focus:ring-0 outline-none w-28 cursor-pointer"
-            />
+        <div className="flex flex-wrap items-center gap-3 bg-card p-2 rounded-xl border border-border">
+          <div
+            className="flex items-center gap-2 cursor-pointer hover:bg-surface-low/30 px-3 py-1.5 rounded-lg transition-all"
+            onClick={(e) => {
+              const input = e.currentTarget.querySelector("input");
+              if (input) {
+                try {
+                  input.showPicker();
+                } catch (err) {
+                  input.focus();
+                }
+              }
+            }}
+          >
+            <Calendar className="h-4.5 w-4.5 text-secondary shrink-0" />
+            <div className="flex flex-col">
+              <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider leading-none mb-0.5">
+                From
+              </span>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-transparent border-none p-0 text-xs text-white focus:ring-0 outline-none w-28 cursor-pointer font-mono [&::-webkit-calendar-picker-indicator]:hidden"
+              />
+            </div>
           </div>
-          <span className="text-xs text-muted-foreground">to</span>
-          <input
-            type="date"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            className="bg-transparent border-none text-xs text-white focus:ring-0 outline-none w-28 cursor-pointer"
-          />
+
+          <span className="text-xs text-muted-foreground font-medium">to</span>
+
+          <div
+            className="flex items-center gap-2 cursor-pointer hover:bg-surface-low/30 px-3 py-1.5 rounded-lg transition-all"
+            onClick={(e) => {
+              const input = e.currentTarget.querySelector("input");
+              if (input) {
+                try {
+                  input.showPicker();
+                } catch (err) {
+                  input.focus();
+                }
+              }
+            }}
+          >
+            <Calendar className="h-4.5 w-4.5 text-secondary shrink-0" />
+            <div className="flex flex-col">
+              <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider leading-none mb-0.5">
+                To
+              </span>
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-transparent border-none p-0 text-xs text-white focus:ring-0 outline-none w-28 cursor-pointer font-mono [&::-webkit-calendar-picker-indicator]:hidden"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
