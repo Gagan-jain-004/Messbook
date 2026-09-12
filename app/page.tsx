@@ -75,12 +75,12 @@ export default function LandingPage() {
               </Link> */}
             </div>
             <div className="flex items-center gap-3 mt-4">
-              <div className="flex -space-x-2">
+              {/* <div className="flex -space-x-2">
                 <div className="w-8 h-8 rounded-full border-2 border-background bg-zinc-800" />
                 <div className="w-8 h-8 rounded-full border-2 border-background bg-zinc-700" />
                 <div className="w-8 h-8 rounded-full border-2 border-background bg-zinc-600" />
-              </div>
-              <span className="text-xs text-muted-foreground">Trusted by 2,000+ students globally</span>
+              </div> */}
+              {/* <span className="text-xs text-muted-foreground">Trusted by 2,000+ students globally</span> */}
             </div>
           </div>
           <div className="relative group w-full flex justify-center">
