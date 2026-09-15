@@ -147,7 +147,7 @@ export async function getUserProfile(userId: string) {
       },
     });
 
-    if (!user) throw new Error("User not found");
+    if (!user) return null;
 
     const taken = user.attendance.filter((a) => a.status === AttendanceStatus.Taken).length;
     const skipped = user.attendance.filter((a) => a.status === AttendanceStatus.Skipped).length;
@@ -168,7 +168,7 @@ export async function getUserProfile(userId: string) {
     };
   } catch (error) {
     console.error("Error getting user profile:", error);
-    throw new Error("Failed to fetch user profile");
+    return null;
   }
 }
 

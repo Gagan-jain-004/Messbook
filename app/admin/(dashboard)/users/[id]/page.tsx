@@ -1,6 +1,7 @@
 import { getUserProfile } from "@/actions/admin";
 import { ArrowLeft, Mail, Calendar as CalendarIcon, CheckCircle2, XCircle, Percent } from "lucide-react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { formatToIST, formatToISTDate } from "@/lib/date";
 
@@ -12,7 +13,13 @@ interface PageProps {
 
 export default async function AdminUserProfilePage({ params }: PageProps) {
   const { id } = await params;
-  const { user, attendance } = await getUserProfile(id);
+  const profileData = await getUserProfile(id);
+
+  if (!profileData) {
+    notFound();
+  }
+
+  const { user, attendance } = profileData;
 
   const takenCount = user.taken;
   const skippedCount = user.skipped;
@@ -58,7 +65,7 @@ export default async function AdminUserProfilePage({ params }: PageProps) {
                 <span className="text-[10px] text-muted-foreground uppercase font-mono">
                   Date Joined
                 </span>
-                <span className="text-sm text-white">{formatToISTDate(user.createdAt, { dateStyle: "medium" })}</span>
+                <span className="text-sm text-white">{formatToISTDate(user.createdAt)}</span>
               </div>
             </div>
           </div>
