@@ -2,6 +2,7 @@ import { getUserProfile } from "@/actions/admin";
 import { ArrowLeft, Mail, Calendar as CalendarIcon, CheckCircle2, XCircle, Percent } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { formatToIST, formatToISTDate } from "@/lib/date";
 
 export const revalidate = 0; // Disable caching so profile data is always fresh
 
@@ -57,7 +58,7 @@ export default async function AdminUserProfilePage({ params }: PageProps) {
                 <span className="text-[10px] text-muted-foreground uppercase font-mono">
                   Date Joined
                 </span>
-                <span className="text-sm text-white">{format(new Date(user.createdAt), "PPP")}</span>
+                <span className="text-sm text-white">{formatToISTDate(user.createdAt, { dateStyle: "medium" })}</span>
               </div>
             </div>
           </div>
@@ -125,7 +126,7 @@ export default async function AdminUserProfilePage({ params }: PageProps) {
                   Meal Status
                 </th>
                 <th className="pb-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Logged Timestamp
+                  Logged Timestamp (IST)
                 </th>
               </tr>
             </thead>
@@ -154,7 +155,7 @@ export default async function AdminUserProfilePage({ params }: PageProps) {
                       )}
                     </td>
                     <td className="py-4 text-xs text-muted-foreground font-mono">
-                      {format(new Date(record.updatedAt), "PPpp")}
+                      {formatToIST(record.updatedAt)}
                     </td>
                   </tr>
                 ))
