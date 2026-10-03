@@ -11,12 +11,9 @@ import {
   Info,
   Clock,
   CheckCircle2,
-  Calendar,
   X,
   Loader2,
-  Eye,
   PlusCircle,
-  Sparkles,
 } from "lucide-react";
 import {
   createNotification,
@@ -146,8 +143,8 @@ export default function NotificationManager({ initialNotifications }: Notificati
       } else {
         setFormError(res.error || "Failed to create notification");
       }
-    } catch (err: any) {
-      setFormError(err.message || "An unexpected error occurred");
+    } catch (err: unknown) {
+      setFormError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -201,8 +198,8 @@ export default function NotificationManager({ initialNotifications }: Notificati
       } else {
         setEditError(res.error || "Failed to update notification");
       }
-    } catch (err: any) {
-      setEditError(err.message || "Failed to update notification");
+    } catch (err: unknown) {
+      setEditError(err instanceof Error ? err.message : "Failed to update notification");
     } finally {
       setIsUpdating(false);
     }
@@ -221,9 +218,9 @@ export default function NotificationManager({ initialNotifications }: Notificati
       } else {
         alert("Failed to delete notification");
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      alert("Error deleting notification");
+      alert(err instanceof Error ? err.message : "Error deleting notification");
     } finally {
       setDeletingId(null);
     }
@@ -275,7 +272,7 @@ export default function NotificationManager({ initialNotifications }: Notificati
           )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Title & Type */}
+            {/* Title & Message */}
             <div className="lg:col-span-2 flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">

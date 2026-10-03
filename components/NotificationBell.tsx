@@ -25,7 +25,16 @@ export default function NotificationBell() {
     try {
       setIsLoading(true);
       const data = await getActiveNotifications();
-      setNotifications(data as any);
+      setNotifications(
+        data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          message: item.message,
+          type: item.type,
+          expiresAt: item.expiresAt,
+          createdAt: item.createdAt,
+        }))
+      );
 
       // Check against localStorage for last read timestamp
       if (typeof window !== "undefined") {
