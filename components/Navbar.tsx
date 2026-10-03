@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
+import NotificationBell from "@/components/NotificationBell";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -22,8 +23,9 @@ export default function Navbar() {
             DietTrack
           </Link>
 
-          {/* Mobile User Button - displayed next to branding on small screens */}
-          <div className="flex md:hidden items-center gap-4">
+          {/* Mobile Notification + User Button - displayed next to branding on small screens */}
+          <div className="flex md:hidden items-center gap-3">
+            <NotificationBell />
             <UserButton
               appearance={{
                 elements: {
@@ -54,8 +56,9 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Desktop User Button - hidden on mobile, displayed on larger screens */}
-        <div className="hidden md:flex items-center gap-4">
+        {/* Desktop Notification + User Button - displayed on larger screens */}
+        <div className="hidden md:flex items-center gap-3">
+          <NotificationBell />
           <UserButton
             appearance={{
               elements: {

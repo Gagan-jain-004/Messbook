@@ -55,3 +55,16 @@ model Feedback {
 
   @@index([userId])
 }
+
+model Notification {
+  id        String    @id @default(uuid())
+  title     String
+  message   String
+  type      String    @default("info") // "info" | "warning" | "alert"
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([expiresAt])
+  @@index([createdAt])
+}

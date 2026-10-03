@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, MessageSquare, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, MessageSquare, Bell, LogOut } from "lucide-react";
 import { logoutAdmin } from "@/actions/admin";
 
 export default function Sidebar() {
@@ -12,6 +12,7 @@ export default function Sidebar() {
   const menuItems = [
     { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/users", label: "Users", icon: Users },
+    { href: "/admin/notifications", label: "Notifications", icon: Bell },
     { href: "/admin/feedback", label: "Feedback", icon: MessageSquare },
   ];
 
@@ -36,7 +37,7 @@ export default function Sidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? "bg-white text-primary-foreground shadow-sm"
+                  ? "bg-white text-primary-foreground shadow-sm font-semibold"
                   : "text-muted-foreground hover:bg-surface-low hover:text-white"
               }`}
             >
